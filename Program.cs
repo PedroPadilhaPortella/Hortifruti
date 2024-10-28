@@ -43,7 +43,7 @@ namespace Hortifruti
                         Console.ReadKey();
                         break;
                     case "2":
-                        Console.WriteLine("Estacao de Pesagem");
+                        WeighProducts();
                         Console.ReadKey();
                         break;
                     case "3":
@@ -54,7 +54,7 @@ namespace Hortifruti
                         Console.ReadKey();
                         break;
                     case "0":
-                        Console.WriteLine("Obrigado por acessar nosso Hortifruti!");
+                        Console.WriteLine("\nObrigado por acessar nosso Hortifruti!");
                         Thread.Sleep(2000);
                         Environment.Exit(0);
                         break;
@@ -67,7 +67,45 @@ namespace Hortifruti
             }
         }
 
-        public static void ManageStock()
+        static void WeighProducts()
+        {
+            Helpers.DisplayHeader($"        ESTACAO DE PESAGEM");
+
+            Console.Write("\nConfira o peso e o preço dos seus produtos\n");
+
+            Console.Write("Id: ");
+            string id = Console.ReadLine();
+            Product product = products.FirstOrDefault(p => p.Id == id);
+
+            if (product == null) {
+                Console.WriteLine("Produto nao encontrado.");
+                return;
+            }
+
+            if (product.UnitOfMeasure == UnitOfMeasure.Unidades)
+            {
+                Console.WriteLine("Este produto e medido em unidades, nao faz sentido em pesa-lo.");
+                return;
+            }
+
+            Console.WriteLine(product.Name);
+
+            decimal weight;
+            while (true)
+            {
+                Console.Write("Peso registrado na balanca: ");
+                string input = Console.ReadLine();
+                input = input.Replace(',', '.');
+
+                if (decimal.TryParse(input, NumberStyles.Any, CultureInfo.InvariantCulture, out weight)) break;
+
+                Console.WriteLine("Peso inválido.");
+            }
+
+            Console.WriteLine(product.GetPrice(weight));
+        }
+
+        static void ManageStock()
         {
             string operacao = null;
             while (operacao != "0")
@@ -92,17 +130,17 @@ namespace Hortifruti
                         Console.ReadKey();
                         break;
                     case "3":
-                        Console.WriteLine("Atualizar produto do estoque");
+                        AtualizarProduto();
                         Console.ReadKey();
                         break;
                     case "4":
-                        Console.WriteLine("Remover produto do estoque");
+                        RemoverProduto();
                         Console.ReadKey();
                         break;
                     case "0":
                         break;
                     default:
-                        Console.WriteLine("Opcao selecionada e invalida!");
+                        Console.WriteLine("\nOpcao selecionada e invalida!");
                         Console.WriteLine("Tente novamente ou digite 'sair' para sair.");
                         Helpers.Exit();
                         break;
@@ -110,7 +148,7 @@ namespace Hortifruti
             }
         }
 
-        public static void ListarProdutos()
+        static void ListarProdutos()
         {
             Helpers.DisplayHeader($"            PRODUTOS EM ESTOQUE");
             products.ForEach((product) =>
@@ -119,12 +157,9 @@ namespace Hortifruti
             });
         }
 
-        public static void AdicionarProduto()
+        static void AdicionarProduto()
         {
-            Helpers.DisplayHeader($"          ADICIONAR PRODUTO AO ESTOQUE");
-
-            Console.Write("Id: ");
-            string id = Console.ReadLine();
+            Helpers.DisplayHeader($"        ADICIONAR PRODUTO AO ESTOQUE");
 
             Console.Write("Nome: ");
             string name = Console.ReadLine();
@@ -155,13 +190,13 @@ namespace Hortifruti
                 Console.WriteLine("Quantidade inválido. Por favor, insira um valor válido.");
             }
 
-            UnitOfMeasure unitOfMeasure = default;
-            while(true)
+            UnitOfMeasure unitOfMeasure;
+            while (true)
             {
                 Console.Write("Unidade de medida (Unidades/Kg): ");
                 string input = Console.ReadLine();
 
-                if (Enum.TryParse(input, true, out unitOfMeasure) 
+                if (Enum.TryParse(input, true, out unitOfMeasure)
                     && Enum.IsDefined(typeof(UnitOfMeasure), unitOfMeasure)) break;
 
                 Console.WriteLine("Unidade de medida inválida. Por favor, insira 'Unidades' ou 'Kg'.");
@@ -174,12 +209,91 @@ namespace Hortifruti
                 string input = Console.ReadLine();
 
                 if (DateTime.TryParseExact(input, "dd/MM/yyyy", null, DateTimeStyles.None, out expireDate) && expireDate > DateTime.Now) break;
-                
+
                 Console.WriteLine("Data inválida. Por favor, insira no formato 'dd/MM/yyyy'");
             }
 
-            Product product = new Product(name, price, quantity, unitOfMeasure, expireDate, id: id);
+            Product product = new Product(name, price, quantity, unitOfMeasure, expireDate);
             products.Add(product);
+
+            Console.WriteLine("Produto adicionado com sucesso!");
+        }
+
+        static void AtualizarProduto()
+        {
+            Helpers.DisplayHeader($"        ATUALIZAR PRODUTO DO ESTOQUE");
+
+            Console.Write("Id: ");
+            string id = Console.ReadLine();
+            Product productToUpdate = products.FirstOrDefault(p => p.Id == id);
+
+            if (productToUpdate == null) {
+                Console.WriteLine("Produto nao encontrado.");
+                return;
+            }
+
+            Console.Write("Nome (deixe vazio para nao alterar): ");
+            string name = Console.ReadLine();
+            if (!string.IsNullOrEmpty(name)) {
+                productToUpdate.Name = name;
+            }
+
+            Console.Write("Preco (deixe vazio para nao alterar): ");
+            string priceInput = Console.ReadLine();
+            if (decimal.TryParse(priceInput.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out decimal price)) {
+                productToUpdate.Price = price;
+            }
+
+            Console.Write("Quantidade (deixe vazio para nao alterar): ");
+            string quantityInput = Console.ReadLine();
+            if (int.TryParse(quantityInput, out int quantity)) {
+                productToUpdate.Quantity = quantity;
+            }
+
+            Console.Write("Unidade de medida (Unidades/Kg) (deixe vazio para não alterar): ");
+            string unitInput = Console.ReadLine();
+            if (Enum.TryParse(unitInput, true, out UnitOfMeasure unit) 
+                && Enum.IsDefined(typeof(UnitOfMeasure), unit)) {
+                productToUpdate.UnitOfMeasure = unit;
+            }
+
+            Console.Write("Data de validade (ex: 30/12/2024) (deixe vazio para não alterar): ");
+            string expireDateInput = Console.ReadLine();
+            if (DateTime.TryParseExact(expireDateInput, "dd/MM/yyyy", null, DateTimeStyles.None, out DateTime expireDate)) {
+                productToUpdate.ExpireDate = expireDate;
+            }
+
+            Console.WriteLine("Produto atualizado com sucesso!");
+            Console.ReadKey();
+        }
+
+        static void RemoverProduto()
+        {
+            Helpers.DisplayHeader($"          REMOVER PRODUTO DO ESTOQUE");
+
+            Console.Write("Id: ");
+            string id = Console.ReadLine();
+            Product productToRemove = products.FirstOrDefault(p => p.Id == id);
+
+            if (productToRemove == null)  {
+                Console.WriteLine("Produto nao encontrado.");
+                return;
+            }
+
+            Console.WriteLine(productToRemove);
+
+            Console.Write("Deseja realmente remover este produto? (sim/nao): ");
+            string resposta = Console.ReadLine()?.Trim().ToLower();
+
+            if (resposta == "sim") {
+                products.Remove(productToRemove);
+                Console.WriteLine("Produto removido com sucesso!");
+            }
+            else {
+                Console.WriteLine("Operação de remoção cancelada.");
+            }
+
+            Console.ReadKey();
         }
     }
 }

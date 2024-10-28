@@ -24,7 +24,7 @@ namespace Hortifruti
             string sair = Console.ReadLine();
             if (sair == "sair")
             {
-                Console.WriteLine("Obrigado por acessar nosso Hortifruti!");
+                Console.WriteLine("\nObrigado por acessar nosso Hortifruti!");
                 Thread.Sleep(1000);
                 Environment.Exit(0);
             }

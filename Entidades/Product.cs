@@ -25,6 +25,12 @@ namespace Hortifruti.Entidades
             ExpireDate = expireDate;
         }
 
+        public string GetPrice(decimal weight)
+        {
+            decimal totalPrice = Price * weight;
+            return $"{Name} - {weight} {UnitOfMeasure} - R$ {totalPrice}";
+        }
+
         public bool IsExpirationDateApproaching() => (ExpireDate - DateTime.Now).TotalDays <= 5;
 
         public string GetDaysUntilExpiration()
