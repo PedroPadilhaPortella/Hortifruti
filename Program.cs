@@ -374,7 +374,7 @@ namespace Hortifruti
 
         public static void Donate()
         {
-            Console.WriteLine("\nDeseja doar algum produto no momento? (sim/nao)?");
+            Console.Write("\nDeseja doar algum produto no momento? (sim/nao)?");
             string option = Console.ReadLine();
 
             if (option == "nao") return;
@@ -382,9 +382,9 @@ namespace Hortifruti
             Console.Write("\nDigite o Id do produto a ser doado: ");
             string id = Console.ReadLine();
 
-            Product product = products.FirstOrDefault(p => p.Id == id);
+            Product productToDonate = products.FirstOrDefault(p => p.Id == id);
 
-            if (product == null) {
+            if (productToDonate == null) {
                 Console.WriteLine("Produto nao encontrado.");
                 return;
             }
@@ -392,8 +392,10 @@ namespace Hortifruti
             Console.Write("\nDigite o nome da entidade para qual o item será doado: ");
             string institution = Console.ReadLine();
 
-            string message = $"\n{product.Quantity} {product.UnitOfMeasure} de {product.Name} serão doados "
-                + $"para a entidade {institution}.";
+            products.Remove(productToDonate);
+
+            string message = $"\n{productToDonate.Quantity} {productToDonate.UnitOfMeasure} "
+                + $"de {productToDonate.Name} serão doados para a entidade {institution}.";
             Console.WriteLine(message);
         }
     }
