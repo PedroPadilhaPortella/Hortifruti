@@ -69,7 +69,7 @@ namespace Hortifruti
 
         static void WeighProducts()
         {
-            Helpers.DisplayHeader($"        ESTACAO DE PESAGEM");
+            Helpers.DisplayHeader($"            ESTACAO DE PESAGEM");
 
             Console.Write("\nConfira o peso e o preço dos seus produtos\n");
 
@@ -88,7 +88,8 @@ namespace Hortifruti
                 return;
             }
 
-            Console.WriteLine(product.Name);
+            Console.WriteLine();
+            Console.WriteLine(product);
 
             decimal weight;
             while (true)
@@ -231,6 +232,9 @@ namespace Hortifruti
                 Console.WriteLine("Produto nao encontrado.");
                 return;
             }
+
+            Console.WriteLine();
+            Console.WriteLine(productToUpdate);
 
             Console.Write("Nome (deixe vazio para nao alterar): ");
             string name = Console.ReadLine();
