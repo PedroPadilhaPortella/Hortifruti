@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Hortifruti.Enums;
 
-namespace Hortifruti.Entidades
+namespace Hortifruti.Entities
 {
     public class Product
     {
@@ -17,7 +13,7 @@ namespace Hortifruti.Entidades
 
         public Product(string name, decimal price, decimal quantity, UnitOfMeasure unitOfMeasure, DateTime expireDate, string id = null)
         {
-            Id = (String.IsNullOrEmpty(id)) ?  Guid.NewGuid().ToString()[..6]: id;
+            Id = (String.IsNullOrEmpty(id)) ? Guid.NewGuid().ToString()[..6] : id;
             Name = name;
             Price = price;
             Quantity = quantity;
@@ -31,13 +27,18 @@ namespace Hortifruti.Entidades
             return $"{Name} - {weight} {UnitOfMeasure} - R$ {totalPrice}";
         }
 
-        public bool IsExpirationDateApproaching() => (ExpireDate - DateTime.Now).TotalDays <= 5;
+        public bool IsExpirationDateApproaching() {
+            double daysUntilExpire = (ExpireDate - DateTime.Now).TotalDays;
+            return daysUntilExpire <= 5 && daysUntilExpire > 0;
+        }
+
+        public bool IsExpired() => (ExpireDate - DateTime.Now).TotalDays <= 0;
 
         public string GetDaysUntilExpiration()
         {
-            int daysUntilExpiration = (ExpireDate - DateTime.Now).Days;
+            int daysUntilExpiration = (ExpireDate - DateTime.Now).Days + 1;
 
-            if (daysUntilExpiration < 0)
+            if (daysUntilExpiration <= 0)
                 return "  (vencido)";
             else if (daysUntilExpiration <= 5)
                 return $"  (vence em {daysUntilExpiration} dias)";

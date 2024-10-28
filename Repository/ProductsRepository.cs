@@ -1,9 +1,5 @@
-﻿using Hortifruti.Entidades;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Hortifruti.Entities;
+using Hortifruti.Enums;
 
 namespace Hortifruti.Repository
 {
@@ -20,7 +16,7 @@ namespace Hortifruti.Repository
             new Product("Alface", 2.50m, 50, UnitOfMeasure.Unidades, new DateTime(2024, 10, 30)),
             new Product("Cenoura", 3.80m, 40, UnitOfMeasure.Kg, new DateTime(2024, 11, 10)),
             new Product("Batata", 2.90m, 35, UnitOfMeasure.Kg, new DateTime(2024, 11, 25)),
-            new Product("Pão Integral", 8.00m, 15, UnitOfMeasure.Unidades, new DateTime(2024, 10, 29)),
+            new Product("Pão Integral", 8.00m, 15, UnitOfMeasure.Unidades, new DateTime(2024, 10, 27)),
             new Product("Iogurte", 3.50m, 10, UnitOfMeasure.Unidades, new DateTime(2024, 11, 02)),
             new Product("Queijo Minas", 20.00m, 8, UnitOfMeasure.Kg, new DateTime(2024, 11, 22))
         };

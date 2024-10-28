@@ -1,4 +1,5 @@
-﻿using Hortifruti.Entidades;
+﻿using Hortifruti.Entities;
+using Hortifruti.Enums;
 using Hortifruti.Repository;
 using System.Globalization;
 
@@ -39,6 +40,7 @@ namespace Hortifruti
                 switch (operacao)
                 {
                     case "1":
+                        // TODO
                         Console.WriteLine("Caixa");
                         Console.ReadKey();
                         break;
@@ -50,7 +52,7 @@ namespace Hortifruti
                         ManageStock();
                         break;
                     case "4":
-                        Console.WriteLine("Doacao de Produtos");
+                        DonateProducts();
                         Console.ReadKey();
                         break;
                     case "0":
@@ -298,6 +300,101 @@ namespace Hortifruti
             }
 
             Console.ReadKey();
+        }
+
+
+        public static void DonateProducts()
+        {
+            string operacao = null;
+            while (operacao != "0")
+            {
+                Helpers.DisplayHeader($"           Produtos para Doar");
+                Console.WriteLine("(1) - Listar produtos para doar para a caridade");
+                Console.WriteLine("(2) - Listar produtos para doar para a agricultura familiar");
+                Console.WriteLine("(0) - Voltar");
+                Console.Write("Selecione uma Opcao: ");
+                operacao = Console.ReadLine();
+
+                switch (operacao)
+                {
+                    case "1":
+                        ListProductsCloseToExpire();
+                        break;
+                    case "2":
+                        ListProductsExpired();
+                        break;
+                    case "0":
+                        break;
+                    default:
+                        Console.WriteLine("\nOpcao selecionada e invalida!");
+                        Console.WriteLine("Tente novamente ou digite 'sair' para sair.");
+                        Helpers.Exit();
+                        break;
+                }
+            }
+        }
+
+        public static void ListProductsCloseToExpire()
+        {
+            Helpers.DisplayHeader($"        PRODUTOS PROXIMOS DA VALIDADE");
+            List<Product> productsToExpire = products.Where((product) => 
+                product.IsExpirationDateApproaching()).ToList();
+
+            if(productsToExpire.Count == 0) {
+                Console.WriteLine("\nNão há produtos próximos da validade no momento.");
+                Console.ReadKey();
+                return;
+            }
+
+            productsToExpire.ForEach((product) => Console.WriteLine(product));
+
+            Donate();
+
+            Console.ReadKey();
+        }
+
+        public static void ListProductsExpired()
+        {
+            Helpers.DisplayHeader($"          PRODUTOS VENCIDOS");
+
+            List<Product> productsExpired = products.Where((product) => product.IsExpired()).ToList();
+
+            if (productsExpired.Count == 0) {
+                Console.WriteLine("\nNão há produtos próximos da validade no momento.");
+                Console.ReadKey();
+                return;
+            }
+
+            productsExpired.ForEach((product) => Console.WriteLine(product));
+
+            Donate();
+
+            Console.ReadKey();
+        }
+
+        public static void Donate()
+        {
+            Console.WriteLine("\nDeseja doar algum produto no momento? (sim/nao)?");
+            string option = Console.ReadLine();
+
+            if (option == "nao") return;
+
+            Console.Write("\nDigite o Id do produto a ser doado: ");
+            string id = Console.ReadLine();
+
+            Product product = products.FirstOrDefault(p => p.Id == id);
+
+            if (product == null) {
+                Console.WriteLine("Produto nao encontrado.");
+                return;
+            }
+
+            Console.Write("\nDigite o nome da entidade para qual o item será doado: ");
+            string institution = Console.ReadLine();
+
+            string message = $"\n{product.Quantity} {product.UnitOfMeasure} de {product.Name} serão doados "
+                + $"para a entidade {institution}.";
+            Console.WriteLine(message);
         }
     }
 }

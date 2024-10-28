@@ -1,4 +1,5 @@
-﻿using Hortifruti.Entidades;
+﻿using Hortifruti.Entities;
+using Hortifruti.Enums;
 
 namespace Hortifruti.Repository
 {
