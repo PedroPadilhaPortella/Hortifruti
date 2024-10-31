@@ -40,8 +40,7 @@ namespace Hortifruti
                 switch (operacao)
                 {
                     case "1":
-                        // TODO
-                        Console.WriteLine("Caixa");
+                        ManageCashier();
                         Console.ReadKey();
                         break;
                     case "2":
@@ -69,6 +68,108 @@ namespace Hortifruti
             }
         }
 
+        static void ManageCashier()
+        {
+            string operacao = null;
+            while (operacao != "0")
+            {
+                Helpers.DisplayHeader($"           Caixa do Hortifruti");
+                Console.WriteLine("(1) - Realizar uma venda");
+                Console.WriteLine("(0) - Voltar");
+                Console.Write("Selecione uma Opcao: ");
+                operacao = Console.ReadLine();
+
+                switch (operacao)
+                {
+                    case "1":
+                        MakeSale();
+                        Console.ReadKey();
+                        break;
+                    case "0":
+                        break;
+                    default:
+                        Console.WriteLine("\nOpcao selecionada e invalida!");
+                        Console.WriteLine("Tente novamente ou digite 'sair' para sair.");
+                        Helpers.Exit();
+                        break;
+                }
+            }
+        }
+
+        static void MakeSale()
+        {
+            List<Product> productsSale = new List<Product>();
+
+            while(true)
+            {
+                Helpers.DisplayHeader($"           Caixa do Hortifruti\n\n           Realizar uma venda");
+                Console.Write("Leia o Código de barras do produto ou digite o Id do Produto: ");
+                string id = Console.ReadLine();
+                Product product = products.FirstOrDefault(p => p.Id == id);
+
+                if (product == null)
+                {
+                    Console.WriteLine("Produto nao encontrado.");
+                    Console.ReadKey();
+                    continue;
+                }
+
+                decimal quantity;
+                while (true)
+                {
+                    Console.Write($"Quantidade (em {product.UnitOfMeasure}): ");
+                    string input = Console.ReadLine();
+                    input = input.Replace(',', '.');
+
+                    if (decimal.TryParse(input, NumberStyles.Any, CultureInfo.InvariantCulture, out quantity)
+                        && quantity > 0) break;
+
+                    Console.WriteLine("Quantidade inválido. Por favor, insira um valor válido.");
+                }
+
+                if (product.Quantity < quantity)
+                {
+                    Console.WriteLine($"Infelizmente não temos essa Quantidade de {product.Name}(s) em estoque.\n Tente uma quantidade menos.");
+                    Console.ReadKey();
+                    continue;
+                }
+
+                Product productSale = new Product(product.Name, product.Price, quantity, product.UnitOfMeasure, product.ExpireDate, id: product.Id);
+
+                productsSale.Add(productSale);
+
+                Console.WriteLine($"Produto adicionado com sucesso: {productSale.Quantity} {productSale.UnitOfMeasure} de {productSale.Name}");
+                Console.ReadKey();
+
+                Console.Write("\nAdicionar mais produtos (sim/nao)? ");
+                string option = Console.ReadLine();
+
+                if(option == "nao")
+                {
+                    break;
+                }
+            }
+
+            Console.Write("\nSua compra está sendo finalizada, aguarde...");
+            Thread.Sleep(1000);
+
+            Helpers.DisplayHeader($"           Caixa do Hortifruti\n\n           Seu Carrinho");
+            productsSale.ForEach((product) => Console.WriteLine(product.ShowOnCart()));
+
+            bool isSuccess = Helpers.PaymentProcessment();
+
+            if (isSuccess) {
+                productsSale.ForEach((productSale) =>
+                {
+                    products.ForEach((product) =>
+                    {
+                        product.Quantity -= productSale.Quantity;
+                    });
+                });
+            }
+
+        }
+
         static void WeighProducts()
         {
             Helpers.DisplayHeader($"            ESTACAO DE PESAGEM");
@@ -86,7 +187,7 @@ namespace Hortifruti
 
             if (product.UnitOfMeasure == UnitOfMeasure.Unidades)
             {
-                Console.WriteLine("Este produto e medido em unidades, nao faz sentido em pesa-lo.");
+                Console.WriteLine("Este produto é medido em unidades, nao faz sentido em pesa-lo.");
                 return;
             }
 
@@ -154,10 +255,7 @@ namespace Hortifruti
         static void ListarProdutos()
         {
             Helpers.DisplayHeader($"            PRODUTOS EM ESTOQUE");
-            products.ForEach((product) =>
-            {
-                Console.WriteLine(product);
-            });
+            products.ForEach((product) => Console.WriteLine(product));
         }
 
         static void AdicionarProduto()

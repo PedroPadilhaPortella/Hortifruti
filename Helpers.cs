@@ -23,5 +23,26 @@
                 Environment.Exit(0);
             }
         }
+
+        public static bool PaymentProcessment()
+        {
+            Console.Write("\nQual será a forma de pagamento?\n Aceitamos Pix / Credito / Debito / VA / VR: ");
+            string paymentMethod = Console.ReadLine();
+
+            switch(paymentMethod)
+            {
+                case "Pix":
+                    Console.WriteLine("Pix");
+                    break;
+                case "Credito":
+                case "Debito":
+                case "VA":
+                case "VR":
+                    Console.WriteLine("Outros");
+                    break;
+            }
+
+            return true;
+        }
     }
 }

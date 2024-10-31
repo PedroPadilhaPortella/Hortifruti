@@ -46,6 +46,11 @@ namespace Hortifruti.Entities
                 return "";
         }
 
+        public string CheckLackOfProducts()
+        {
+            return Quantity == 0 ? $"(em falta)" : "";
+        }
+
         public override bool Equals(object obj)
         {
             return obj is Product product && Id == product.Id;
@@ -60,8 +65,15 @@ namespace Hortifruti.Entities
         {
             return $"Id {Id} - {Name}" 
             + $"\nPreco R$ {Price} por {UnitOfMeasure}"
-            + $"\nQuantidade em estoque: {Quantity} {UnitOfMeasure}" 
-            + $"\nValidade: {ExpireDate:dd/MM/yyyy}" + $"{(GetDaysUntilExpiration())}\n";
+            + $"\nQuantidade em estoque: {Quantity} {UnitOfMeasure}  {(CheckLackOfProducts())}" 
+            + $"\nValidade: {ExpireDate:dd/MM/yyyy}  {(GetDaysUntilExpiration())}\n";
+        }
+
+        public string ShowOnCart()
+        {
+            return $"  {Id} - {Name}"
+            + $"\n  {Quantity} {UnitOfMeasure} x R${Price}\n"
+            + $"                                           R$ {Price * Quantity}\n";
         }
     }
 }
