@@ -129,7 +129,7 @@ namespace Hortifruti
 
                 if (product.Quantity < quantity)
                 {
-                    Console.WriteLine($"Infelizmente não temos essa Quantidade de {product.Name}(s) em estoque.\n Tente uma quantidade menos.");
+                    Console.WriteLine($"Infelizmente não temos essa Quantidade de {product.Name}(s) em estoque. Tente uma quantidade menos.");
                     Console.ReadKey();
                     continue;
                 }
@@ -150,23 +150,29 @@ namespace Hortifruti
                 }
             }
 
-            Console.Write("\nSua compra está sendo finalizada, aguarde...");
+            Console.WriteLine("\nSua compra está sendo finalizada, aguarde...");
             Thread.Sleep(1000);
 
             Helpers.DisplayHeader($"           Caixa do Hortifruti\n\n           Seu Carrinho");
             productsSale.ForEach((product) => Console.WriteLine(product.ShowOnCart()));
 
             bool isSuccess = Helpers.PaymentProcessment();
+            isSuccess = false;
 
-            if (isSuccess) {
-                productsSale.ForEach((productSale) =>
-                {
-                    products.ForEach((product) =>
-                    {
-                        product.Quantity -= productSale.Quantity;
-                    });
-                });
+            if (!isSuccess) {
+                Console.WriteLine("Ocorreu um erro no processamento do pagamento de sua compra, o Gerente será acionado.");
+                return;
             }
+
+            productsSale.ForEach((productSale) =>
+            {
+                products.ForEach((product) =>
+                {
+                    product.Quantity -= productSale.Quantity;
+                });
+            });
+
+            Console.Write("\nSua compra está sendo finalizada, aguarde...");
 
         }
 
