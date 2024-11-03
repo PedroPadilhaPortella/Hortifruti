@@ -157,7 +157,6 @@ namespace Hortifruti
             productsSale.ForEach((product) => Console.WriteLine(product.ShowOnCart()));
 
             bool isSuccess = Helpers.PaymentProcessment();
-            isSuccess = false;
 
             if (!isSuccess) {
                 Console.WriteLine("Ocorreu um erro no processamento do pagamento de sua compra, o Gerente será acionado.");
@@ -172,8 +171,12 @@ namespace Hortifruti
                 });
             });
 
-            Console.Write("\nSua compra está sendo finalizada, aguarde...");
+            Console.WriteLine("\nSua compra está sendo finalizada, aguarde...");
 
+
+            Helpers.DisplayHeader($"           Hortifruti");
+            Console.WriteLine("Compra realizada com sucesso, obrigado!");
+            Console.ReadKey();
         }
 
         static void WeighProducts()

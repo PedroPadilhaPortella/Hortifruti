@@ -29,19 +29,9 @@
             Console.Write("\nQual será a forma de pagamento?\n Aceitamos Pix / Credito / Debito / VA / VR: ");
             string paymentMethod = Console.ReadLine();
 
-            // TODO: process payments
-            switch(paymentMethod)
-            {
-                case "Pix":
-                    Console.WriteLine("Pix");
-                    break;
-                case "Credito":
-                case "Debito":
-                case "VA":
-                case "VR":
-                    Console.WriteLine("Outros");
-                    break;
-            }
+            Thread.Sleep(1000);
+            Console.WriteLine($"\nProcessando seu pagamento com {paymentMethod}");
+            Thread.Sleep(1000);
 
             return true;
         }
